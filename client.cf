@@ -1,0 +1,85 @@
+###############################################################
+# A client.cf file similar to the one developed in the tutorial
+#
+# $Revision: 1.2 $
+# $Date: 1993/09/28 19:30:09 $
+###############################################################
+
+###### Start customizing here #######################
+# Other names for the local host
+Cwlocalhost
+
+# This is the name of the mail hub
+DHhub.your.domain
+# This is the name of the mail relay
+DRmailhost
+###### Stop customizing here #######################
+
+# Our official canonical hostname.
+Dj$w
+
+## Standard macros
+# name used for error messages
+DnMailer-Daemon
+# UNIX header format
+DlFrom $g  $d
+# seperator (operator) characters
+Do.:%@!^=/[]
+# format of a total name
+Dq<$g>
+
+# Process messages in the background.
+Odbackground
+# Default permissions for files
+OF0600
+# Default user and group (daemon/daemon)
+Og1
+Ou1
+# The logging level
+OL9
+# Accept oldstyle addresses
+Oo
+# Send a copy of bounced messages to postmaster
+OPPostmaster@$H
+# SMTP read timeout
+Or15m
+# Note, we do queue, in case hub and MX's are all down.
+OQ/var/spool/mqueue
+# Time to live in the queue
+OT5d
+
+###   Message precedences (all of equal weight. let hub decide.)
+Pfirst-class=0
+Pspecial-delivery=0
+Pjunk=0
+
+###   Trusted users
+T root daemon
+
+## Required headers
+HReceived: $?sfrom $s $.by $j ($v) id $i; $b
+H?D?Date: $a
+H?F?From: $q
+H?M?Message-Id: <$t.$i@$j>
+H?D?Resent-Date: $a
+H?F?Resent-From: $q
+H?M?Resent-Message-Id: <$t.$i@$j>
+H?x?Full-Name: $x
+
+S0 # Punt to hub
+R$*			$#ether $@$R $:$1
+
+S3 # local users made to look like they are from the hub
+R$*<$*<$*>$*>$*	$3		denest
+R$*<$+>$*	$2		basic RFC822 parsing
+R$*<>$*		$n		RFC1123 <>
+R$-		$@ $1 @ $H	user => user@hub
+R$+@$+		$: $1 @ $[$2$]	canonify the hostname
+R$+@$=w		$@ $1 @ $H	user@thishost => user@hub
+R$=w!$+		$@ $2 @ $H	thishost!user => user@hub
+R$+%$=w		$@ $>3 $1 @ $2	handle % hack thishost
+R$*		$@ $1		default, unchanged
+
+Mether,	P=[IPC], F=mDFMuCX, S=0, R=0, A=IPC $h
+Mlocal, P=xxx, A=Required by sendmail but unused
+Mprog,  P=xxx, A=Required by sendmail but unused

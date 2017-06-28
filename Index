@@ -1,0 +1,17 @@
+File: sun.cf.howto
+	Converting Standard Sun Config Files to Sendmail Version 8
+	by Rick McCarty Texas Instruments Inc.
+	Document details the changes necessary to continue using 
+	your current SunOS sendmail.cf with sendmail version 8.
+
+File: client.cf
+	A client.cf file similar to the one developed in
+	the tutorial of the book.
+
+File: hostnames.c
+	Compile and run this to see how your host's libraries
+	determine your machine's canonical name.
+
+File: massagelog.sh
+	A simple shell script to sum all mail traffic from
+	the syslog file.
